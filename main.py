@@ -56,6 +56,8 @@ if __name__ == "__main__":
     args = get_args()
     with open(args.config, "r") as f:
         config = yaml.safe_load(f)
+    if args.columns is not None:
+        config["layout_config"]["columns"] = args.columns
     title, table, text, formula, figure = load_data_from_config(config)
     ensure_work_dirs(config)
     

@@ -14,39 +14,58 @@ import yaml
 from typing import List
 
 
-def _count_table_cols(html_str: str) -> int:
+PAGE_CONTENT_WIDTH_PX = 625.0
+COLUMN_GAP_PX = 16.0
+CHAR_WIDTH_PX = 9.0
+CELL_PADDING_PX = 4.0
+
+
+def _char_width(text: str) -> float:
+    """CJK chars count as 2 units, ASCII as 1."""
+    w = 0
+    for ch in text:
+        w += 2 if '一' <= ch <= '鿿' else 1
+    return w
+
+
+def estimate_table_width(html_str: str) -> float:
     soup = BeautifulSoup(html_str, 'html.parser')
-    for section in (soup.find('thead'), soup.find('tbody'), soup.find('table')):
-        if section:
-            first_row = section.find('tr')
-            if first_row:
-                return len(first_row.find_all(['th', 'td']))
-    return 0
+    rows = soup.find_all('tr')
+    if not rows:
+        return 0.0
+    num_cols = max(len(r.find_all(['th', 'td'])) for r in rows)
+    if num_cols == 0:
+        return 0.0
+    col_max_chars = [0.0] * num_cols
+    for row in rows:
+        cells = row.find_all(['th', 'td'])
+        for i, cell in enumerate(cells[:num_cols]):
+            col_max_chars[i] = max(col_max_chars[i], _char_width(cell.get_text()))
+    return sum(max(c, 4) * CHAR_WIDTH_PX + CELL_PADDING_PX for c in col_max_chars)
 
 
-def determine_doc_columns(input_content: dict, config: dict) -> int:
-    cfg_cols = str(config["layout_config"].get("columns", 3))
-    if cfg_cols != "auto":
-        return int(cfg_cols)
+def column_width_px(doc_columns: int) -> float:
+    return (PAGE_CONTENT_WIDTH_PX - (doc_columns - 1) * COLUMN_GAP_PX) / doc_columns
 
-    thresholds = config.get("column_thresholds", {"wide": 6, "medium": 4})
-    max_cols = max(
-        (_count_table_cols(ele.get("html", "")) for ele in input_content.get("body", []) if ele.get("type") == "table"),
-        default=0,
-    )
 
-    if max_cols >= thresholds.get("wide", 6):
-        return 1
-    elif max_cols >= thresholds.get("medium", 4):
-        return 2
-    else:
-        return 3
+def annotate_table_spans(input_content: dict, doc_columns: int) -> None:
+    col_width = column_width_px(doc_columns)
+    for ele in input_content.get('body', []):
+        if ele.get('type') == 'table':
+            est = estimate_table_width(ele.get('html', ''))
+            ele['span'] = est > col_width
+
+
+def get_doc_columns(config: dict) -> int:
+    return int(config["layout_config"].get("columns", 3))
 
 
 def pipeline(title: List[dict], text: List[dict], table: List[dict], formula: List[dict], figure: List[dict], nums: int, process_id: int):
     args = get_args()
     with open(args.config, "r") as f:
         config = yaml.safe_load(f)
+    if args.columns is not None:
+        config["layout_config"]["columns"] = args.columns
 
     work_path = config["work_path"]
     html_dir = work_path["html_dir"]
@@ -69,10 +88,11 @@ def pipeline(title: List[dict], text: List[dict], table: List[dict], formula: Li
             continue
 
         unique_id = str(uuid.uuid4())
-        html_path = os.path.join(html_dir, f"{unique_id}.html")
+        html_path = os.path.join(os.path.abspath(html_dir), f"{unique_id}.html")
 
-        doc_columns = determine_doc_columns(input_content, config)
+        doc_columns = get_doc_columns(config)
         styles = get_styles_num(config, columns=doc_columns)
+        annotate_table_spans(input_content, doc_columns)
 
         Jinja_render(template_path, input_content, template, styles, html_path)
 

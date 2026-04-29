@@ -21,20 +21,12 @@ layout_config:
     table: 2
     figure: 0
     title: 0
-    text: 4
+    text: 8
     formula: 0
     header: 0
     footer: 0
     page_footnote: 0
-  columns: auto   # dynamically determined from table column count
-
-# Thresholds for adaptive column layout:
-#   table cols >= wide  → 1-column document
-#   table cols >= medium → 2-column document
-#   table cols <  medium → 3-column document
-column_thresholds:
-  wide: 6
-  medium: 4
+  columns: 3  # 可通过 --columns 1/2/3 覆盖
 
 num_workers: 3
-nums: 9
+nums: 3

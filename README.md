@@ -39,17 +39,33 @@ google-chrome --version
     
 ### 🚀 Step 2: Run Data Synthesis
 
+**Fixed column layout** (1 / 2 / 3 columns):
+
 ```shell
-python main.py --config=examples/three_columns.yaml
+python main.py --config=examples/base.yaml              # default: 3 columns (from YAML)
+python main.py --config=examples/base.yaml --columns 1  # 1-column layout
+python main.py --config=examples/base.yaml --columns 2  # 2-column layout
+python main.py --config=examples/base.yaml --columns 3  # 3-column layout
+```
+
+`--columns` overrides `layout_config.columns` in the YAML at runtime, so a single config file covers all layouts.
+
+Add `--check` to write boxed preview images to `defaults.save_path` (default: `Temp/`):
+
+```shell
+python main.py --config=examples/base.yaml --columns 2 --check
 ```
 
 ### 🧩 Step 3: Convert Synthesized Data into Markdown
 
 ```shell
-python scripts/doc_parser.py --config=examples/three_columns.yaml
+python scripts/doc_parser.py --config=examples/base.yaml
 ```
-📁 The synthesized data will be saved in `results.json`.  
-You can modify the save path by updating `work_path.result` in `examples/three_columns.yaml`.
+
+📁 Images, HTML sources, and ground-truth JSONs share the same UUID filename and are saved under:
+- `work_path.save_image_dir` — rendered page images
+- `work_path.html_dir` — HTML sources
+- `work_path.output_gt_dir` — bounding-box ground-truth JSON
 
 
 ### 🛠️ Optional: Extending Template and Style Diversity
@@ -71,14 +87,14 @@ work_path:
   template_path: "templates"
   template_file: "three_columns/document.html.jinja"
   template_get_data: "three_columns/getData"
-  html_path: "/path/to/Infinity_Synth/working/html/output_{i}.html"
-  save_image_dir: "working/image/"
-  output_gt_path: "working/ground_truth/result_of_id{i}.json"
+  html_dir: "working/html"
+  save_image_dir: "working/image"
+  output_gt_dir: "working/ground_truth"
 ```
 
-> Important: Always provide an absolute path for `html_path`
-
-- save_image_dir: Directory path where the final images of rendered HTML pages will be stored.
+- `html_dir`: Directory for rendered HTML sources (one file per sample, named by UUID).
+- `save_image_dir`: Directory for final rendered page images.
+- `output_gt_dir`: Directory for bounding-box ground-truth JSON files.
 
 ```
 defaults:
@@ -102,8 +118,8 @@ layout_config:
   columns: 1
 ```
 
-- element: defines the **maximum** number of elements for a single page.
-- columns: the number of columns. Now only support 1.
+- element: defines the **maximum** number of elements per page.
+- columns: number of document columns (1 / 2 / 3). Can be overridden at runtime with `--columns`.
 
 ```
 num_workers: 10

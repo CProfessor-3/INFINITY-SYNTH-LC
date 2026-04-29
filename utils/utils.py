@@ -18,6 +18,13 @@ def get_args():
         action="store_true",
         help="If this parameter is provided, images with bounding boxes will be generated and saved to the path specified by save_path",
     )
+    parser.add_argument(
+        "--columns",
+        type=int,
+        default=None,
+        choices=[1, 2, 3],
+        help="Override layout_config.columns in the YAML (1, 2, or 3)",
+    )
     args = parser.parse_args()
     get_args._args = args
     return args
