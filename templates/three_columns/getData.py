@@ -57,6 +57,8 @@ def get_data(self, layout_config):
             insert_count = max_count
         if element == "formula":
             insert_count = max_count
+        if element == "figure":
+            insert_count = max_count
 
 
         for _ in range(insert_count):

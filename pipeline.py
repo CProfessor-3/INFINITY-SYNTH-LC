@@ -2,6 +2,7 @@ import os
 import logging
 import logging.handlers
 import uuid
+from PIL import Image as PILImage
 from utils.ReadFile import read_files
 from utils.utils import extract_form_from_json, draw_boxes_on_image,save_data_to_file, read_table_text
 from config.styles import get_styles_num
@@ -54,6 +55,13 @@ def annotate_table_spans(input_content: dict, doc_columns: int) -> None:
         if ele.get('type') == 'table':
             est = estimate_table_width(ele.get('html', ''))
             ele['span'] = est > col_width
+        elif ele.get('type') == 'figure':
+            path = ele.get('path', '')
+            try:
+                img_w, _ = PILImage.open(path).size
+                ele['span'] = img_w >= column_width_px(doc_columns) * 1.5
+            except Exception:
+                ele['span'] = False
 
 
 def get_doc_columns(config: dict) -> int:
@@ -99,13 +107,13 @@ def pipeline(title: List[dict], text: List[dict], table: List[dict], formula: Li
         url = f"file://{html_path}"
 
         # Fill loop: keep adding text until remaining space < threshold
-        FILL_THRESHOLD_PX = 30
+        FILL_THRESHOLD_PX = 80
         for _ in range(8):
             render.driver.get(url)
             remaining = render.get_remaining_space()
             if remaining < FILL_THRESHOLD_PX:
                 break
-            to_add = max(1, int(remaining / 80))
+            to_add = max(1, int(remaining / 100))
             for _ in range(to_add):
                 input_content['body'].append(next(Input_data.text_iter))
             Jinja_render(template_path, input_content, template, styles, html_path)

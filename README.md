@@ -76,11 +76,11 @@ For additional customization, please refer to the following parameters.
 ```
 data_paths:
   text: "examples/data/text.json"
-  image: "examples/data/figure.json"
+  image: "examples/data/figure.json"   # list of {"type": "figure", "path": "/abs/path/to/image.jpg", "caption": "..."}
   table: "examples/data/table.json"
   formula: "examples/data/formula.json"
   title: ""
-```  
+```
 
 ```
 work_path:
@@ -98,24 +98,22 @@ work_path:
 
 ```
 defaults:
-  save_path: "Temp"
-  work_path_template: "Temp_process_id{process_id}"
-  output_file_template: "result_of_id{process_id}.json"
-  save_every_n: 40
+  save_path: "Temp"   # --check preview images saved here
+  save_every_n: 4     # checkpoint frequency (ground-truth flush interval)
 ```
 
 ```
 layout_config:
   element:
-    table: 1
-    figure: 1
+    table: 2      # max tables per page
+    figure: 1     # max figures per page (0 to disable)
     title: 0
-    text: 6
-    formula: 3
-    header: 1
-    footer: 1
-    page_footnote: 1
-  columns: 1
+    text: 8       # max text blocks per page
+    formula: 0
+    header: 0
+    footer: 0
+    page_footnote: 0
+  columns: 3      # default column count; override with --columns 1/2/3
 ```
 
 - element: defines the **maximum** number of elements per page.

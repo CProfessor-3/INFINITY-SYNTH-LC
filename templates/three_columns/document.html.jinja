@@ -61,10 +61,9 @@
                 </div>
                 {% set ns.tab_idx = ns.tab_idx + 1 %}
             {% elif ele.type == "figure" %}
-                <img src="{{ ele.path }}">
-
-                <p class="figure_caption">图{{ ns.fig_idx }}：{{ ele.caption }}</p>
-                
+                <div class="figure_outer {% if ele.span %}span-all{% endif %}">
+                    <img class="figure_img" src="{{ ele.path }}">
+                </div>
                 {% set ns.fig_idx = ns.fig_idx + 1 %}
 
             {% elif ele.type == "title" %}

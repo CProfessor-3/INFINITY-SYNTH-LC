@@ -9,7 +9,8 @@
       "Bash(python3 main.py --config=examples/two_columns.yaml)",
       "Bash(python3 main.py --config=examples/base.yaml --columns 2)",
       "Bash(python3 main.py --config=examples/base.yaml --columns 3)",
-      "Bash(python3 main.py --config=examples/base.yaml --columns 1)"
+      "Bash(python3 main.py --config=examples/base.yaml --columns 1)",
+      "Bash(python3 -c \"import os; print\\(os.path.abspath\\('examples/data/lw.jpeg'\\)\\)\")"
     ],
     "additionalDirectories": [
       "/Users/jyxc-dz-0100284/Documents/code/doubledir/Infinity-Synth/working/html"

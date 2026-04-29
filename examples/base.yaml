@@ -19,7 +19,7 @@ defaults:
 layout_config:
   element:
     table: 2
-    figure: 0
+    figure: 1
     title: 0
     text: 8
     formula: 0

@@ -146,6 +146,22 @@ p {
   text-align: {{ styles.title.center if styles.title.center else 'center' }};
 }
 
+.figure_outer {
+  width: 100%;
+  margin: 4px auto;
+  text-align: center;
+}
+
+.figure_outer.span-all {
+  column-span: all;
+}
+
+.figure_img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .figure_caption {
   text-align: justify;
   font-size: 12px;
