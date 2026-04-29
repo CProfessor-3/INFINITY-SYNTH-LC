@@ -1,0 +1,40 @@
+data_paths:
+  text: "examples/data/text.json"
+  image: "examples/data/figure.json"
+  table: "examples/data/table.json"
+  formula: "examples/data/formula.json"
+  title: ""
+work_path:
+  template_path: "templates"
+  template_file: "three_columns/document.html.jinja"
+  template_get_data: "three_columns/getData"
+  html_dir: "working/html"
+  save_image_dir: "working/image"
+  output_gt_dir: "working/ground_truth"
+  result: "results.json"
+defaults:
+  save_path: "Temp"
+  save_every_n: 4
+
+layout_config:
+  element:
+    table: 2
+    figure: 0
+    title: 0
+    text: 4
+    formula: 0
+    header: 0
+    footer: 0
+    page_footnote: 0
+  columns: auto   # dynamically determined from table column count
+
+# Thresholds for adaptive column layout:
+#   table cols >= wide  → 1-column document
+#   table cols >= medium → 2-column document
+#   table cols <  medium → 3-column document
+column_thresholds:
+  wide: 6
+  medium: 4
+
+num_workers: 3
+nums: 9

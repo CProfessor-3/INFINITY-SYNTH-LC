@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Generated output
+working/html/
+working/image/
+working/ground_truth/
+Temp/
+results.json
+
+# ChromeDriver binary
+drive/chromedriver
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store

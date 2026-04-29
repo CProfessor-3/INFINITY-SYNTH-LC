@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wait)",
+      "Bash(python3 main.py --config=examples/adaptive_columns.yaml)",
+      "Bash(python3 -c ' *)",
+      "Bash(kill 5052 1752 1750 5051)"
+    ],
+    "additionalDirectories": [
+      "/Users/jyxc-dz-0100284/Documents/code/doubledir/Infinity-Synth/working/html"
+    ]
+  }
+}
